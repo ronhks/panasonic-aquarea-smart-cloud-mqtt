@@ -1,0 +1,12 @@
+config
+resources
+
+# compiled binary
+**/panasonic-aquarea-smart-cloud-mqtt
+
+
+# IDEA
+**/.idea
+**/*.iml
+**/pipeline.gdsl
+

@@ -1,0 +1,14 @@
+AquareaServiceCloudURL="https://aquarea-service.panasonic.com/"
+AquareaSmartCloudURL="https://aquarea-smart.panasonic.com/"
+AquareaServiceCloudLogin=""
+AquareaServiceCloudPassword=""
+AquateaTimeout=4
+MqttServer=""
+MqttPort="1883"
+MqttLogin="test"
+MqttPass="testpass"
+MqttTopicRoot="aquarea"
+MqttClientID="aquarea-test-pub"
+MqttKeepalive=60
+PoolInterval=2
+LogSecOffset=2550
