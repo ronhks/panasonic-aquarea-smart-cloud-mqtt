@@ -11,7 +11,7 @@ import (
 var mqttClient mqtt.Client
 var token mqtt.Token
 
-func initMqttConn() {
+func initMqttConnection() {
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(fmt.Sprintf("%s://%s:%s", "tcp", config.MqttServer, config.MqttPort))
 	opts.SetPassword(config.MqttPass)
@@ -35,13 +35,13 @@ func initMqttConn() {
 func connLostHandler(c mqtt.Client, err error) {
 	fmt.Printf("Connection lost, reason: %v\n", err)
 
-	//Perform additional action...
+	//TODO Perform additional action...
 }
 
 func startsub(c mqtt.Client) {
 	c.Subscribe("aquarea/+/+/set", 2, HandleMSGfromMQTT)
 
-	//Perform additional action...
+	//TODO Perform additional action...
 }
 
 func HandleMSGfromMQTT(c mqtt.Client, msg mqtt.Message) {

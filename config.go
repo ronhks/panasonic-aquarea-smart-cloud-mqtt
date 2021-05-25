@@ -4,10 +4,24 @@ import (
 	"github.com/BurntSushi/toml"
 	"log"
 	"os"
+	"time"
 )
 
-func ReadConfig() Config {
+
+var AquareaTimeout time.Duration
+var MqttKeepalive time.Duration
+var PoolInterval time.Duration
+
+var config Config
+
+func readAndSetConfig(){
 	var configfileName = "config"
+	config = readConfig(configfileName)
+
+	setTimeouts()
+}
+
+func readConfig(configfileName string) Config {
 	_, err := os.Stat(configfileName)
 	if err != nil {
 		log.Fatal("Config file is missing: ", configfileName)
@@ -18,6 +32,12 @@ func ReadConfig() Config {
 		log.Fatal(err)
 	}
 	return config
+}
+
+func setTimeouts(){
+	AquareaTimeout = time.Second * time.Duration(config.AquareaTimeout)
+	MqttKeepalive = time.Second * time.Duration(config.MqttKeepalive)
+	PoolInterval = time.Second * time.Duration(config.PoolInterval)
 }
 
 type Config struct {

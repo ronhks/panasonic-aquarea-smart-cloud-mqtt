@@ -8,23 +8,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var AquareaTimeout time.Duration
-var MqttKeepalive time.Duration
-var PoolInterval time.Duration
+
 
 var LastChecksum [16]byte
 
-var config Config
-
 func main() {
-	config = ReadConfig()
-	AquareaTimeout = time.Second * time.Duration(config.AquareaTimeout)
-	MqttKeepalive = time.Second * time.Duration(config.MqttKeepalive)
-	PoolInterval = time.Second * time.Duration(config.PoolInterval)
-
-	initHttpClient()
-
-	initMqttConn()
+	initializeTheEnvironment()
 
 	loginAndGetContract()
 
@@ -32,6 +21,12 @@ func main() {
 		getStatusData()
 		time.Sleep(PoolInterval)
 	}
+}
+
+func initializeTheEnvironment() {
+	readAndSetConfig()
+	initHttpClient()
+	initMqttConnection()
 }
 
 func loginAndGetContract() error {
