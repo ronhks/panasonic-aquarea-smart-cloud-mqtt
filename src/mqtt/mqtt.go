@@ -1,25 +1,28 @@
-package main
+package mqtt
 
 import (
+	conf "config"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"strconv"
 	"strings"
 	"time"
-	config "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/config"
 )
 
 var mqttClient mqtt.Client
 var token mqtt.Token
 
-func initMqttConnection() {
+func InitMqttConnection() {
+
+	config := conf.GetConfig()
+
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(fmt.Sprintf("%s://%s:%s", "tcp", config.MqttServer, config.MqttPort))
 	opts.SetPassword(config.MqttPass)
 	opts.SetUsername(config.MqttLogin)
 	opts.SetClientID(config.MqttClientID)
 
-	opts.SetKeepAlive(MqttKeepalive)
+	opts.SetKeepAlive(time.Duration(config.MqttKeepalive))
 	opts.SetOnConnectHandler(startsub)
 	opts.SetConnectionLostHandler(connLostHandler)
 
@@ -67,7 +70,7 @@ func HandleMSGfromMQTT(c mqtt.Client, msg mqtt.Message) {
 
 func PublishLog(topic string, msg string) {
 
-	topicWithRoot := config.MqttTopicRoot + topic
+	topicWithRoot := conf.GetConfig().MqttTopicRoot + topic
 	fmt.Println("Published to topic: ", topicWithRoot, " with data: ", msg)
 	msg = strings.TrimSpace(msg)
 	msg = strings.ToUpper(msg)
@@ -81,7 +84,7 @@ func PublishLog(topic string, msg string) {
 }
 
 func updateLastUpdatedTimestamp() {
-	lastUpdateTopic := config.MqttTopicRoot + "/log/LastUpdated"
+	lastUpdateTopic := conf.GetConfig().MqttTopicRoot + "/log/LastUpdated"
 	nowEpoch := fmt.Sprintf("%d", time.Now().Unix())
 	fmt.Println("Published to topic: ", lastUpdateTopic, " timestamp: ", nowEpoch)
 	token = mqttClient.Publish(lastUpdateTopic, byte(0), false, nowEpoch)

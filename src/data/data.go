@@ -1,9 +1,11 @@
 package data
 
 import (
+	"config"
 	"encoding/json"
 	"errors"
 	"fmt"
+	httputils "http"
 	"io/ioutil"
 )
 
@@ -46,14 +48,14 @@ type StatusData struct {
 
 func GetDeviceData() (StatusData, error) {
 
-	deviceDataURL := config.AquareaSmartCloudURL + "/remote/v1/api/devices/"
+	deviceDataURL := config.GetConfig().AquareaSmartCloudURL + "/remote/v1/api/devices/"
 
 	var statusData StatusData
 
-	deviceDataURLWithDeviceID := deviceDataURL + getDeviceIdFromCookie()
+	deviceDataURLWithDeviceID := deviceDataURL + httputils.GetDeviceIdFromCookie()
 
 	const referer = "https://aquarea-smart.panasonic.com/remote/a2wEnergyConsumption?keepState=true"
-	resp, err := GetREQ(deviceDataURLWithDeviceID, referer)
+	resp, err := httputils.GetREQ(deviceDataURLWithDeviceID, referer)
 	if err != nil {
 		return statusData, err
 	}

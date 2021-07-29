@@ -8,10 +8,6 @@ import (
 )
 
 
-var AquareaTimeout time.Duration
-var MqttKeepalive time.Duration
-var PoolInterval time.Duration
-
 var config *Config
 
 func GetConfig() *Config{
@@ -23,42 +19,41 @@ func GetConfig() *Config{
 }
 
 func readAndSetConfig(){
-	var configfileName = "config"
-	readConfig(configfileName)
+	var configFilename = "config"
+	readConfig(configFilename)
 
 	setTimeouts()
 }
 
-func readConfig(configfileName string) {
-	_, err := os.Stat(configfileName)
+func readConfig(configFilename string) {
+	_, err := os.Stat(configFilename)
 	if err != nil {
-		log.Fatal("Config file is missing: ", configfileName)
+		log.Fatal("Config file is missing: ", configFilename)
 	}
 
-	var config Config
-	if _, err := toml.DecodeFile(configfileName, &config); err != nil {
+	if _, err := toml.DecodeFile(configFilename, &config); err != nil {
 		log.Fatal(err)
 	}
 }
 
 func setTimeouts(){
-	AquareaTimeout = time.Second * time.Duration(config.AquareaTimeout)
-	MqttKeepalive = time.Second * time.Duration(config.MqttKeepalive)
-	PoolInterval = time.Second * time.Duration(config.PoolInterval)
+	config.HttpTimeout = time.Second * time.Duration(config.HttpTimeout)
+	config.MqttKeepalive = time.Second * time.Duration(config.MqttKeepalive)
+	config.RefreshInterval = time.Second * time.Duration(config.RefreshInterval)
 }
 
 type Config struct {
 	AquareaSmartCloudURL        string
-	AquareaSmartCloudLogin      string
-	AquareaSmartCloudPassword   string
-	AquareaTimeout              int
+	Username 					string
+	Password				    string
+	HttpTimeout              	time.Duration
 	MqttServer                  string
 	MqttPort                    string
 	MqttLogin                   string
 	MqttPass                    string
 	MqttTopicRoot               string
 	MqttClientID                string
-	MqttKeepalive               int
-	PoolInterval                int
+	MqttKeepalive               time.Duration
+	RefreshInterval             time.Duration
 	LogSecOffset                int64
 }

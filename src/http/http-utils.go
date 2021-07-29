@@ -1,6 +1,7 @@
-package http
+package httputils
 
 import (
+	"config"
 	"crypto/tls"
 	"net/http"
 	"net/http/cookiejar"
@@ -11,20 +12,20 @@ import (
 var client http.Client
 var	cookieJar cookiejar.Jar
 
-func initHttpClient() {
+func InitHttpClient() {
 	cookieJar, _ := cookiejar.New(nil)
 	client = http.Client{
 		Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
 		Jar:       cookieJar,
-		Timeout:   AquareaTimeout,
+		Timeout: config.GetConfig().HttpTimeout,
 	}
 }
 
 func PostREQ(url string) (*http.Response, error) {
-	return PostREQWithReferer(url,config.AquareaSmartCloudURL,nil)
+	return PostREQWithReferer(url,config.GetConfig().AquareaSmartCloudURL,nil)
 }
-func PostREQWithParam(url string, client http.Client, uv url.Values) (*http.Response, error) {
-	return PostREQWithReferer(url,config.AquareaSmartCloudURL,uv)
+func PostREQWithParam(url string, uv url.Values) (*http.Response, error) {
+	return PostREQWithReferer(url,config.GetConfig().AquareaSmartCloudURL,uv)
 
 }
 func PostREQWithReferer(url string, referer string, uv url.Values) (*http.Response, error) {
@@ -63,8 +64,8 @@ func GetREQWithParam(url string, referer string, uv url.Values) (*http.Response,
 	return resp, nil
 }
 
-func getDeviceIdFromCookie() string {
-	url,_ := url.Parse(config.AquareaSmartCloudURL)
+func GetDeviceIdFromCookie() string {
+	url,_ := url.Parse(config.GetConfig().AquareaSmartCloudURL)
 
 	selectedDeviceId := ""
 	for _,cookie := range client.Jar.Cookies(url) {

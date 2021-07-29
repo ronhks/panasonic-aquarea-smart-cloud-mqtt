@@ -1,7 +1,7 @@
-package login
+package panasonic
 
 import (
-	"config"
+	conf "config"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,24 +10,15 @@ import (
 	"net/url"
 )
 
-
-type LoginStruct struct {
-	AgreementStatus struct {
-		Contract      bool `json:"contract"`
-		CookiePolicy  bool `json:"cookiePolicy"`
-		PrivacyPolicy bool `json:"privacyPolicy"`
-	} `json:"agreementStatus"`
-	ErrorCode int `json:"errorCode"`
-}
-
 func GetLogin() error {
 
 	var loginResponseStruct LoginStruct
-	loginURL := config.GetConfig().AquareaSmartCloudURL + "/remote/v1/api/auth/login"
+	config := conf.GetConfig()
+	loginURL := config.AquareaSmartCloudURL + "/remote/v1/api/auth/login"
 
 	uv := url.Values{
-		"var.loginId":         {config.GetConfig().AquareaSmartCloudLogin},
-		"var.password":        {config.GetConfig().AquareaSmartCloudPassword},
+		"var.loginId":         {config.Username},
+		"var.password":        {config.Password},
 		"var.inputOmit":       {"false"},
 	}
 
@@ -61,6 +52,26 @@ func GetLogin() error {
 	return nil
 }
 
+func GetContractAndSetGwidAndDeviceIdInCookie() error {
+
+	contractURL := conf.GetConfig().AquareaSmartCloudURL + "/remote/contract"
+
+	_, err := httputils.PostREQ(contractURL)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func isPanasonicResponseHasError(loginStruct LoginStruct) bool {
 	return loginStruct.ErrorCode != 0
+}
+
+type LoginStruct struct {
+	AgreementStatus struct {
+		Contract      bool `json:"contract"`
+		CookiePolicy  bool `json:"cookiePolicy"`
+		PrivacyPolicy bool `json:"privacyPolicy"`
+	} `json:"agreementStatus"`
+	ErrorCode int `json:"errorCode"`
 }

@@ -5,7 +5,12 @@ import (
 	"fmt"
 	"time"
 
+	"config"
+	"data"
 	log "github.com/sirupsen/logrus"
+	httputils "http"
+	"mqtt"
+	"panasonic"
 )
 
 
@@ -17,27 +22,30 @@ func main() {
 
 	loginAndGetContract()
 
+	startQueryStatusData()
+}
+
+func startQueryStatusData() {
 	for {
 		getStatusData()
-		time.Sleep(PoolInterval)
+		time.Sleep(config.GetConfig().RefreshInterval)
 	}
 }
 
 func initializeTheEnvironment() {
-	readAndSetConfig()
-	initHttpClient()
-	initMqttConnection()
+	httputils.InitHttpClient()
+	mqtt.InitMqttConnection()
 }
 
 func loginAndGetContract() error {
-	err := GetLogin()
+	err := panasonic.GetLogin()
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("Error while logging in.")
 		return err
 	}
 
-	err = GetContractAndSetGwidAndDeviceIdInCookie()
+	err = panasonic.GetContractAndSetGwidAndDeviceIdInCookie()
 	if err != nil {
 		log.Fatal(err)
 		fmt.Println(err)
@@ -51,7 +59,7 @@ func loginAndGetContract() error {
 
 func getStatusData() bool {
 
-	statusData,err := GetDeviceData()
+	statusData,err := data.GetDeviceData()
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("Error while get DeviceData")
@@ -60,8 +68,8 @@ func getStatusData() bool {
 	}
 
 	statusDataJson, err := json.Marshal(statusData)
-	PublishLog("/status", string(statusDataJson))
-	PublishLog("/outdoor/temp", fmt.Sprintf("%d", statusData.Status[0].OutdoorNow))
+	mqtt.PublishLog("/status", string(statusDataJson))
+	mqtt.PublishLog("/outdoor/temp", fmt.Sprintf("%d", statusData.Status[0].OutdoorNow))
 	fmt.Println(statusData)
 
 	return true
