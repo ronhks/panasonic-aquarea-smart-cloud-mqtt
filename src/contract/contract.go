@@ -1,4 +1,4 @@
-package main
+package contract
 
 func GetContractAndSetGwidAndDeviceIdInCookie() error {
 

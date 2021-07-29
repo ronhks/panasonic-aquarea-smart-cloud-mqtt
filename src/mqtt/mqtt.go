@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	config "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/config"
 )
 
 var mqttClient mqtt.Client

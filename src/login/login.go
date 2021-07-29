@@ -1,4 +1,4 @@
-package main
+package login
 
 import (
 	"encoding/json"
