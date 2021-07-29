@@ -38,14 +38,10 @@ func initializeTheEnvironment() {
 }
 
 func loginAndGetContract() error {
-	err := panasonic.GetLogin()
-	if err != nil {
-		fmt.Println(err)
-		fmt.Println("Error while logging in.")
-		return err
-	}
 
-	err = panasonic.GetContractAndSetGwidAndDeviceIdInCookie()
+	panasonic.Login()
+
+	err := panasonic.GetContractAndSetGwidAndDeviceIdInCookie()
 	if err != nil {
 		log.Fatal(err)
 		fmt.Println(err)

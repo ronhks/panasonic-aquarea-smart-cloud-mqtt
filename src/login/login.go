@@ -26,8 +26,8 @@ func GetLogin() error {
 	loginURL := config.GetConfig().AquareaSmartCloudURL + "/remote/v1/api/auth/login"
 
 	uv := url.Values{
-		"var.loginId":         {config.GetConfig().AquareaSmartCloudLogin},
-		"var.password":        {config.GetConfig().AquareaSmartCloudPassword},
+		"var.loginId":         {config.GetConfig().Username},
+		"var.password":        {config.GetConfig().Password},
 		"var.inputOmit":       {"false"},
 	}
 
