@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -63,9 +62,8 @@ func getStatusData() bool {
 		return false
 	}
 
-	statusDataJson, err := json.Marshal(statusData)
-	mqtt.PublishLog("/status", string(statusDataJson))
-	mqtt.PublishLog("/outdoor/temp", fmt.Sprintf("%d", statusData.Status[0].OutdoorNow))
+	//statusDataJson, err := json.Marshal(statusData)
+	mqtt.PublishStatus(statusData)
 	fmt.Println(statusData)
 
 	return true

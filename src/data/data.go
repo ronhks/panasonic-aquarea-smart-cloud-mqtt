@@ -37,11 +37,13 @@ type StatusData struct {
 		HolidayTimer 	 		int 	`json:"holidayTimer"`
 		DeviceGuid 	 			string 	`json:"deviceGuid"`
 		Bivalent 	 			int 	`json:"bivalent"`
-	//	TankStatus struct {
-		//	SpecialMode 	 	int `json:"specialMode"`
-	//		OperationStatus 	bool `json:"operationStatus"`
-	//	} `json:"specialStatus"`
-
+		TankStatus[] struct {
+			OperationStatus 	int 	`json:"operationStatus"`
+			TemparatureNow 		int 	`json:"temparatureNow"`
+			HeatMax 			int 	`json:"heatMax"`
+			HeatMin 			int 	`json:"heatMin"`
+			HeatSet 			int 	`json:"heatSet"`
+		} `json:"tankStatus"`
 	} `json:"status"`
 	ErrorCode int `json:"errorCode"`
 }

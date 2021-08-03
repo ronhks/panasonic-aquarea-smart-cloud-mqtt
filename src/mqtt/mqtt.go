@@ -2,9 +2,9 @@ package mqtt
 
 import (
 	conf "config"
+	"data"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -23,7 +23,7 @@ func InitMqttConnection() {
 	opts.SetClientID(config.MqttClientID)
 
 	opts.SetKeepAlive(time.Duration(config.MqttKeepalive))
-	opts.SetOnConnectHandler(startsub)
+	opts.SetOnConnectHandler(subscribe)
 	opts.SetConnectionLostHandler(connLostHandler)
 
 	// connect to broker
@@ -42,33 +42,33 @@ func connLostHandler(c mqtt.Client, err error) {
 	//TODO Perform additional action...
 }
 
-func startsub(c mqtt.Client) {
-	c.Subscribe("aquarea/+/+/set", 2, HandleMSGfromMQTT)
-
-	//TODO Perform additional action...
+func subscribe(c mqtt.Client) {
+	c.Subscribe(conf.GetConfig().MqttTopicRoot + "/water/temp/set", 0, handleMSGfromMQTT)
 }
 
-func HandleMSGfromMQTT(c mqtt.Client, msg mqtt.Message) {
-	s := strings.Split(msg.Topic(), "/")
-	if len(s) > 3 {
-		DeviceID := s[1]
-		Operation := s[2]
-		fmt.Printf("Device ID %s \n Operation %s", DeviceID, Operation)
-		if Operation == "Zone1SetpointTemperature" {
-			i, err := strconv.ParseFloat(string(msg.Payload()), 32)
-			fmt.Printf("i=%d, type: %T\n err: %s", i, i, err)
-			//TODO fix thisstr := MakeChangeHeatingTemperatureJSON(DeviceID, 1, int(i))
-			//TODO fmt.Printf("\n %s \n ", str)
-			//TODO set user action SetUserOption(client, DeviceID, str)
-
-		}
+func handleMSGfromMQTT(c mqtt.Client, msg mqtt.Message) {
+	topic := strings.Split(msg.Topic(), "/")
+	for _, path := range topic {
+		fmt.Printf("%s\n", path)
 	}
-	fmt.Printf("* [%s] %s\n", msg.Topic(), string(msg.Payload()))
-	fmt.Printf(".")
+
+
 
 }
 
-func PublishLog(topic string, msg string) {
+func PublishStatus (statusData data.StatusData) {
+	publishLog("/outdoor/temp/now", fmt.Sprintf("%d", statusData.Status[0].OutdoorNow))
+	publishLog("/heat/temp/max", fmt.Sprintf("%d", statusData.Status[0].ZoneStatus[0].HeatMax))
+	publishLog("/heat/temp/min", fmt.Sprintf("%d", statusData.Status[0].ZoneStatus[0].HeatMin))
+	publishLog("/heat/operation", fmt.Sprintf("%d", statusData.Status[0].ZoneStatus[0].OperationStatus))
+	publishLog("/water/temp/now", fmt.Sprintf("%d", statusData.Status[0].TankStatus[0].TemparatureNow))
+	publishLog("/water/temp/max", fmt.Sprintf("%d", statusData.Status[0].TankStatus[0].HeatMax))
+	publishLog("/water/temp/min", fmt.Sprintf("%d", statusData.Status[0].TankStatus[0].HeatMin))
+	publishLog("/water/operation", fmt.Sprintf("%d", statusData.Status[0].TankStatus[0].OperationStatus))
+
+}
+
+func publishLog(topic string, msg string) {
 
 	topicWithRoot := conf.GetConfig().MqttTopicRoot + topic
 	fmt.Println("Published to topic: ", topicWithRoot, " with data: ", msg)
