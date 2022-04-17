@@ -10,20 +10,54 @@ If you satisfied, thanks for buying a coffee for me :)
 
 ## How to start
 ### Install
-
-asd
+`docker pull`
 ### Configure
-asd
+Create a config file copy as `config` from [config.example](./config.example)
+Change the parameters
 ### Run
-asd
+`docker run`
 ### Usage
-asd
+The MQTT topic are under the `MqttTopicRoot`.
+#### Read values
+* `/outdoor/temp/now` - Outdoor temp
+* `/heat/temp/max` - Heating max. temp 
+* `/heat/temp/min` - Heating min. temp
+* `/heat/operation` - Heating operation status
+  * `0` - OFF
+  * `1` - ON
+* `/water/temp/now` - Actual Hot Water temp
+* `/water/temp/max` - Hot water max. temp.
+* `/water/temp/min` - Hot water min. temp.
+* `/water/operation` - Hot water operation status
+  * `0` - OFF
+  * `1` - ON
+* `/operation` - Device operation status
+  * `0` - OFF
+  * `1` - ON
 
+#### Change values
+* `/water/temp/set` - set the HOT WATER temp. 
+  * sample REQUEST JSON:
+    ```json
+    {
+      "newTemp" : 42
+    }
+    ```
+* `/water/operation/on` - Turn ON the Hot Water
+* `/water/operation/off` - Turn OFF the Hot Water
+* `/heat/operation/on` - Turn ON the heating
+* `/heat/operation/off` - Turn OFF the heating
+* `/operation/on` - Turn ON the device
+* `/operation/off` - Turn OFF the device
 
 ## Contributing
-Welcome all type of contributing!
+Welcome all type of contributing! :)
 
 ### Requirements
+* docker daemon
+* MQTT server
+* Panasonic Smart Cloud registration
+* [Panasonic Aquarea T-CAP Wifi Module - Panasonic CZ-TAW1](https://www.panasonicproclub.com/uploads/PL/catalogues/CZ-TAW1_quick%20guide.pdf)
 #### 3rd party libs
 **Thanks for**
 * [BurntSushi/toml](https://github.com/BurntSushi/toml) for easier config handling
