@@ -10,6 +10,9 @@ src/github.com/
 src/golang.org/
 src/gopkg.in/
 
+sample.json
+set-status.json
+
 # compiled binary
 **/panasonic-aquarea-smart-cloud-mqtt
 

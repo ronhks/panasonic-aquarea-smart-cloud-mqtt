@@ -3,6 +3,7 @@ package mqtt
 import (
 	conf "config"
 	"data"
+	"device"
 	"encoding/json"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -15,6 +16,8 @@ import (
 
 var mqttClient mqtt.Client
 var token mqtt.Token
+
+var maxConnectionTries = 3
 
 func InitMqttConnection() {
 
@@ -38,18 +41,23 @@ func InitMqttConnection() {
 	}
 }
 
-func connLostHandler(_ mqtt.Client, err error) {
-	fmt.Printf("Connection lost, reason: %v\n", err)
+func connLostHandler(mqqtClient mqtt.Client, err error) {
+	log.Errorf("Connection lost, reason: %v\n", err)
 
-	//TODO Perform additional action...
+	for maxConnectionTries > 0 {
+		mqqtClient.Connect()
+		maxConnectionTries--
+	}
 }
 
-func subscribe(c mqtt.Client) {
-	c.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/temp/set", 0, setWaterTempHandler)
-	c.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation/on", 0, setWaterOperationOnHandler)
-	c.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation/off", 0, setWaterOperationOffHandler)
-	c.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/on", 0, setHeatOperationOnHandler)
-	c.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/off", 0, setHeatOperationOffHandler)
+func subscribe(mqttClient mqtt.Client) {
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/temp/set", 0, setWaterTempHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation/on", 0, setWaterOperationOnHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation/off", 0, setWaterOperationOffHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/on", 0, setHeatOperationOnHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/off", 0, setHeatOperationOffHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation/on", 0, setOperationOnHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation/off", 0, setOperationOffHandler)
 }
 
 func setWaterTempHandler(_ mqtt.Client, msg mqtt.Message) {
@@ -60,7 +68,7 @@ func setWaterTempHandler(_ mqtt.Client, msg mqtt.Message) {
 		log.Error("Fail to parse JSON, %v", token.Error())
 	}
 
-	_, err = water.SetWaterTemp(setTemp.NewTemp)
+	err = water.SetWaterTemp(setTemp.NewTemp)
 	if err != nil {
 		log.Error(err)
 		return
@@ -69,7 +77,7 @@ func setWaterTempHandler(_ mqtt.Client, msg mqtt.Message) {
 }
 
 func setWaterOperationOnHandler(_ mqtt.Client, _ mqtt.Message) {
-	_, err := water.SetOperationOn()
+	err := water.SetOperationOn()
 	if err != nil {
 		log.Error(err)
 		return
@@ -77,14 +85,14 @@ func setWaterOperationOnHandler(_ mqtt.Client, _ mqtt.Message) {
 }
 
 func setWaterOperationOffHandler(_ mqtt.Client, _ mqtt.Message) {
-	_, err := water.SetOperationOff()
+	err := water.SetOperationOff()
 	if err != nil {
 		log.Error(err)
 		return
 	}
 }
 func setHeatOperationOnHandler(_ mqtt.Client, _ mqtt.Message) {
-	_, err := heat.SetOperationOn()
+	err := heat.SetOperationOn()
 	if err != nil {
 		log.Error(err)
 		return
@@ -92,7 +100,21 @@ func setHeatOperationOnHandler(_ mqtt.Client, _ mqtt.Message) {
 }
 
 func setHeatOperationOffHandler(_ mqtt.Client, _ mqtt.Message) {
-	_, err := heat.SetOperationOff()
+	err := heat.SetOperationOff()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+}
+func setOperationOnHandler(_ mqtt.Client, _ mqtt.Message) {
+	err := device.SetOperationOn()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+}
+func setOperationOffHandler(_ mqtt.Client, _ mqtt.Message) {
+	err := device.SetOperationOff()
 	if err != nil {
 		log.Error(err)
 		return

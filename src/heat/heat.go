@@ -3,13 +3,14 @@ package heat
 import (
 	"data"
 	"encoding/json"
+	"errors"
 	log "github.com/sirupsen/logrus"
 	httputils "http"
 	"net/http"
 	"session"
 )
 
-func SetOperationOn() (bool, error) {
+func SetOperationOn() error {
 	deviceGuid, deviceDataURLWithDeviceID := session.GetSessionInitData()
 
 	statusDataInput := setNewStatus(data.ON, data.ON, data.ModeHeatAndHotWater, deviceGuid)
@@ -18,26 +19,26 @@ func SetOperationOn() (bool, error) {
 
 	if err != nil {
 		log.Error("Fail to create convert JSON, %v", err.Error())
-		return false, err
+		return errors.New("NOK HTTP response code")
 	}
 
 	response, err := httputils.PostREQWithJsonBody(deviceDataURLWithDeviceID, byteArray)
 
 	if err != nil {
 		log.Error(err)
-		return false, err
+		return err
 	}
 	if response.StatusCode != http.StatusOK {
 		log.Error("HTTP call result code is:", response.StatusCode)
-		return false, err
+		return errors.New("NOK HTTP response code")
 	}
 
 	log.Info("Heat is set ON")
 
-	return true, nil
+	return nil
 }
 
-func SetOperationOff() (bool, error) {
+func SetOperationOff() error {
 	deviceGuid, deviceDataURLWithDeviceID := session.GetSessionInitData()
 
 	statusDataInput := setNewStatus(data.OFF, data.ON, data.ModeOnlyHotWater, deviceGuid)
@@ -46,23 +47,23 @@ func SetOperationOff() (bool, error) {
 
 	if err != nil {
 		log.Error("Fail to create convert JSON, %v", err.Error())
-		return false, err
+		return err
 	}
 
 	response, err := httputils.PostREQWithJsonBody(deviceDataURLWithDeviceID, byteArray)
 
 	if err != nil {
 		log.Error(err)
-		return false, err
+		return err
 	}
 	if response.StatusCode != http.StatusOK {
 		log.Error("HTTP call result code is:", response.StatusCode)
-		return false, err
+		return errors.New("NOK HTTP response code")
 	}
 
 	log.Info("Heat is set OFF")
 
-	return true, nil
+	return nil
 }
 
 func setNewStatus(newStatus int, deviceNewStatus int, operationMode int, deviceGuid string) data.SetStatusData {

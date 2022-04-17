@@ -3,13 +3,14 @@ package water
 import (
 	"data"
 	"encoding/json"
+	"errors"
 	log "github.com/sirupsen/logrus"
 	httputils "http"
 	"net/http"
 	"session"
 )
 
-func SetWaterTemp(newTemp int) (bool, error) {
+func SetWaterTemp(newTemp int) error {
 	deviceGuid, deviceDataURLWithDeviceID := session.GetSessionInitData()
 
 	var tankStatus data.TankStatus
@@ -23,26 +24,26 @@ func SetWaterTemp(newTemp int) (bool, error) {
 	byteArray, err := getJsonByteArray(statusDataInput)
 	if err != nil {
 		log.Error(err)
-		return false, err
+		return err
 	}
 
 	response, err := httputils.PostREQWithJsonBody(deviceDataURLWithDeviceID, byteArray)
 
 	if err != nil {
 		log.Error(err)
-		return false, err
+		return err
 	}
 	if response.StatusCode != http.StatusOK {
 		log.Error("HTTP call result code is:", response.StatusCode)
-		return false, err
+		return errors.New("NOK HTTP response code")
 	}
 
 	log.Info("Water temp set to ", newTemp, " C")
 
-	return true, nil
+	return nil
 }
 
-func SetOperationOn() (bool, error) {
+func SetOperationOn() error {
 	deviceGuid, deviceDataURLWithDeviceID := session.GetSessionInitData()
 
 	setStatusDataInput := setTankStatus(data.ON, data.ON, deviceGuid)
@@ -50,26 +51,26 @@ func SetOperationOn() (bool, error) {
 	byteArray, err := getJsonByteArrayFromSetStatus(setStatusDataInput)
 	if err != nil {
 		log.Error(err)
-		return false, err
+		return err
 	}
 
 	response, err := httputils.PostREQWithJsonBody(deviceDataURLWithDeviceID, byteArray)
 
 	if err != nil {
 		log.Error(err)
-		return false, err
+		return err
 	}
 	if response.StatusCode != http.StatusOK {
 		log.Error("HTTP call result code is:", response.StatusCode)
-		return false, err
+		return errors.New("NOK HTTP response code")
 	}
 
 	log.Info("Water operation set ON")
 
-	return true, nil
+	return nil
 }
 
-func SetOperationOff() (bool, error) {
+func SetOperationOff() error {
 
 	deviceGuid, deviceDataURLWithDeviceID := session.GetSessionInitData()
 
@@ -79,23 +80,23 @@ func SetOperationOff() (bool, error) {
 
 	if err != nil {
 		log.Errorf("Fail to create convert JSON, %v", err.Error())
-		return false, err
+		return err
 	}
 
 	response, err := httputils.PostREQWithJsonBody(deviceDataURLWithDeviceID, byteArray)
 
 	if err != nil {
 		log.Error(err)
-		return false, err
+		return err
 	}
 	if response.StatusCode != http.StatusOK {
 		log.Error("HTTP call result code is:", response.StatusCode)
-		return false, err
+		return errors.New("NOK HTTP response code")
 	}
 
 	log.Info("Water operation set OFF")
 
-	return true, nil
+	return nil
 }
 
 func setTankStatus(newStatus int, deviceNewStatus int, deviceGuid string) data.SetStatusData {
@@ -126,7 +127,7 @@ func getJsonByteArrayFromSetStatus(setStatusDataInput data.SetStatusData) ([]byt
 
 	if err != nil {
 		log.Errorf("Fail to create convert JSON, %v", err.Error())
-		return nil, nil
+		return nil, err
 	}
 	return byteArray, err
 }
