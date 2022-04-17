@@ -7,10 +7,9 @@ import (
 	"time"
 )
 
-
 var config *Config
 
-func GetConfig() *Config{
+func GetConfig() *Config {
 	if config == nil {
 		readAndSetConfig()
 	}
@@ -18,7 +17,7 @@ func GetConfig() *Config{
 	return config
 }
 
-func readAndSetConfig(){
+func readAndSetConfig() {
 	var configFilename = "config"
 	readConfig(configFilename)
 
@@ -36,24 +35,28 @@ func readConfig(configFilename string) {
 	}
 }
 
-func setTimeouts(){
-	config.HttpTimeout = time.Second * time.Duration(config.HttpTimeout)
-	config.MqttKeepalive = time.Second * time.Duration(config.MqttKeepalive)
-	config.RefreshInterval = time.Second * time.Duration(config.RefreshInterval)
+func setTimeouts() {
+	config.HttpTimeout = time.Second * config.HttpTimeout
+	config.MqttKeepalive = time.Second * config.MqttKeepalive
+	config.RefreshInterval = time.Second * config.RefreshInterval
 }
 
 type Config struct {
-	AquareaSmartCloudURL        string
-	Username 					string
-	Password				    string
-	HttpTimeout              	time.Duration
-	MqttServer                  string
-	MqttPort                    string
-	MqttLogin                   string
-	MqttPass                    string
-	MqttTopicRoot               string
-	MqttClientID                string
-	MqttKeepalive               time.Duration
-	RefreshInterval             time.Duration
-	LogSecOffset                int64
+	AquareaSmartCloudURL string
+	Username             string
+	Password             string
+	HttpTimeout          time.Duration
+	MqttServer           string
+	MqttPort             string
+	MqttLogin            string
+	MqttPass             string
+	MqttTopicRoot        string
+	MqttClientID         string
+	MqttKeepalive        time.Duration
+	RefreshInterval      time.Duration
+	LogSecOffset         int64
+}
+
+func GetDeviceDataURL() string {
+	return GetConfig().AquareaSmartCloudURL + "/remote/v1/api/devices/"
 }

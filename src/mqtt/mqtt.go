@@ -3,10 +3,14 @@ package mqtt
 import (
 	conf "config"
 	"data"
+	"encoding/json"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	log "github.com/sirupsen/logrus"
+	"heat"
 	"strings"
 	"time"
+	"water"
 )
 
 var mqttClient mqtt.Client
@@ -22,41 +26,80 @@ func InitMqttConnection() {
 	opts.SetUsername(config.MqttLogin)
 	opts.SetClientID(config.MqttClientID)
 
-	opts.SetKeepAlive(time.Duration(config.MqttKeepalive))
+	opts.SetKeepAlive(config.MqttKeepalive)
 	opts.SetOnConnectHandler(subscribe)
 	opts.SetConnectionLostHandler(connLostHandler)
 
-	// connect to broker
 	mqttClient = mqtt.NewClient(opts)
-	//defer client.Disconnect(uint(2))
 
 	token = mqttClient.Connect()
 	if token.Wait() && token.Error() != nil {
-		fmt.Printf("Fail to connect broker, %v", token.Error())
+		log.Error("Fail to connect broker, %v", token.Error())
 	}
 }
 
-func connLostHandler(c mqtt.Client, err error) {
+func connLostHandler(_ mqtt.Client, err error) {
 	fmt.Printf("Connection lost, reason: %v\n", err)
 
 	//TODO Perform additional action...
 }
 
 func subscribe(c mqtt.Client) {
-	c.Subscribe(conf.GetConfig().MqttTopicRoot + "/water/temp/set", 0, handleMSGfromMQTT)
+	c.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/temp/set", 0, setWaterTempHandler)
+	c.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation/on", 0, setWaterOperationOnHandler)
+	c.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation/off", 0, setWaterOperationOffHandler)
+	c.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/on", 0, setHeatOperationOnHandler)
+	c.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/off", 0, setHeatOperationOffHandler)
 }
 
-func handleMSGfromMQTT(c mqtt.Client, msg mqtt.Message) {
-	topic := strings.Split(msg.Topic(), "/")
-	for _, path := range topic {
-		fmt.Printf("%s\n", path)
+func setWaterTempHandler(_ mqtt.Client, msg mqtt.Message) {
+	var setTemp data.SetTemp
+	err := json.Unmarshal(msg.Payload(), &setTemp)
+
+	if err != nil {
+		log.Error("Fail to parse JSON, %v", token.Error())
 	}
 
-
+	_, err = water.SetWaterTemp(setTemp.NewTemp)
+	if err != nil {
+		log.Error(err)
+		return
+	}
 
 }
 
-func PublishStatus (statusData data.StatusData) {
+func setWaterOperationOnHandler(_ mqtt.Client, _ mqtt.Message) {
+	_, err := water.SetOperationOn()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+}
+
+func setWaterOperationOffHandler(_ mqtt.Client, _ mqtt.Message) {
+	_, err := water.SetOperationOff()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+}
+func setHeatOperationOnHandler(_ mqtt.Client, _ mqtt.Message) {
+	_, err := heat.SetOperationOn()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+}
+
+func setHeatOperationOffHandler(_ mqtt.Client, _ mqtt.Message) {
+	_, err := heat.SetOperationOff()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+}
+
+func PublishStatus(statusData data.StatusData) {
 	publishLog("/outdoor/temp/now", fmt.Sprintf("%d", statusData.Status[0].OutdoorNow))
 	publishLog("/heat/temp/max", fmt.Sprintf("%d", statusData.Status[0].ZoneStatus[0].HeatMax))
 	publishLog("/heat/temp/min", fmt.Sprintf("%d", statusData.Status[0].ZoneStatus[0].HeatMin))
@@ -65,18 +108,19 @@ func PublishStatus (statusData data.StatusData) {
 	publishLog("/water/temp/max", fmt.Sprintf("%d", statusData.Status[0].TankStatus[0].HeatMax))
 	publishLog("/water/temp/min", fmt.Sprintf("%d", statusData.Status[0].TankStatus[0].HeatMin))
 	publishLog("/water/operation", fmt.Sprintf("%d", statusData.Status[0].TankStatus[0].OperationStatus))
+	publishLog("/operation", fmt.Sprintf("%d", statusData.Status[0].OperationStatus))
 
 }
 
 func publishLog(topic string, msg string) {
 
 	topicWithRoot := conf.GetConfig().MqttTopicRoot + topic
-	fmt.Println("Published to topic: ", topicWithRoot, " with data: ", msg)
+	log.Trace("Published to topic: ", topicWithRoot, " with data: ", msg)
 	msg = strings.TrimSpace(msg)
 	msg = strings.ToUpper(msg)
 	token = mqttClient.Publish(topicWithRoot, byte(0), false, msg)
 	if token.Wait() && token.Error() != nil {
-		fmt.Printf("Fail to publish, %v", token.Error())
+		log.Errorf("Fail to publish, %v", token.Error())
 	}
 
 	updateLastUpdatedTimestamp()
@@ -86,9 +130,9 @@ func publishLog(topic string, msg string) {
 func updateLastUpdatedTimestamp() {
 	lastUpdateTopic := conf.GetConfig().MqttTopicRoot + "/log/LastUpdated"
 	nowEpoch := fmt.Sprintf("%d", time.Now().Unix())
-	fmt.Println("Published to topic: ", lastUpdateTopic, " timestamp: ", nowEpoch)
+	log.Trace("Published to topic: ", lastUpdateTopic, " timestamp: ", nowEpoch)
 	token = mqttClient.Publish(lastUpdateTopic, byte(0), false, nowEpoch)
 	if token.Wait() && token.Error() != nil {
-		fmt.Printf("Fail to publish, %v", token.Error())
+		log.Errorf("Fail to publish, %v", token.Error())
 	}
 }

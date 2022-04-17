@@ -2,6 +2,14 @@ config
 resources
 har-files
 
+bin
+old
+pkg
+
+src/github.com/
+src/golang.org/
+src/gopkg.in/
+
 # compiled binary
 **/panasonic-aquarea-smart-cloud-mqtt
 

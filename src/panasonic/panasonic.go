@@ -2,12 +2,17 @@ package panasonic
 
 import (
 	conf "config"
+	log "github.com/sirupsen/logrus"
 	httputils "http"
 	"login"
 )
 
 func Login() {
-	login.GetLogin()
+	err := login.GetLogin()
+	if err != nil {
+		log.Error(err)
+		return
+	}
 }
 
 func GetContractAndSetGwidAndDeviceIdInCookie() error {
@@ -16,6 +21,7 @@ func GetContractAndSetGwidAndDeviceIdInCookie() error {
 
 	_, err := httputils.PostREQ(contractURL)
 	if err != nil {
+		log.Error(err)
 		return err
 	}
 	return nil

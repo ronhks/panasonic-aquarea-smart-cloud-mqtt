@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"config"
@@ -12,22 +11,34 @@ import (
 	"panasonic"
 )
 
-
-
-var LastChecksum [16]byte
-
 func main() {
 	initializeTheEnvironment()
 
-	loginAndGetContract()
+	err := loginAndGetContract()
+	if err != nil {
+		log.Error(err)
+		log.Error("Error while Login and get Contract")
+		return
+	}
 
 	startQueryStatusData()
 }
 
 func startQueryStatusData() {
-	for {
-		getStatusData()
-		time.Sleep(config.GetConfig().RefreshInterval)
+	maxTries := 3
+	for maxTries > 0 {
+		success := getStatusData()
+		if success {
+			maxTries = 3
+			time.Sleep(config.GetConfig().RefreshInterval)
+		} else {
+			err := loginAndGetContract()
+			if err != nil {
+				log.Error(err)
+				maxTries--
+			}
+			startQueryStatusData()
+		}
 	}
 }
 
@@ -43,8 +54,7 @@ func loginAndGetContract() error {
 	err := panasonic.GetContractAndSetGwidAndDeviceIdInCookie()
 	if err != nil {
 		log.Fatal(err)
-		fmt.Println(err)
-		fmt.Println("Error while get Contract")
+		log.Error("Error while get Contract")
 
 		return err
 	}
@@ -54,17 +64,14 @@ func loginAndGetContract() error {
 
 func getStatusData() bool {
 
-	statusData,err := data.GetDeviceData()
-	if err != nil {
-		fmt.Println(err)
-		fmt.Println("Error while get DeviceData")
-
+	statusData, err := data.GetDeviceData()
+	if err != nil || len(statusData.Status) == 0 {
+		log.Error(err)
+		log.Error("Error while get DeviceData")
 		return false
 	}
-
-	//statusDataJson, err := json.Marshal(statusData)
 	mqtt.PublishStatus(statusData)
-	fmt.Println(statusData)
+	log.Trace(statusData)
 
 	return true
 }

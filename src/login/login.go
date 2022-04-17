@@ -5,13 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	httputils "http"
+	"io"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 )
 
-
-type LoginStruct struct {
+type ResponseStruct struct {
 	AgreementStatus struct {
 		Contract      bool `json:"contract"`
 		CookiePolicy  bool `json:"cookiePolicy"`
@@ -22,45 +24,70 @@ type LoginStruct struct {
 
 func GetLogin() error {
 
-	var loginResponseStruct LoginStruct
+	var loginResponseStruct ResponseStruct
 	loginURL := config.GetConfig().AquareaSmartCloudURL + "/remote/v1/api/auth/login"
 
 	uv := url.Values{
-		"var.loginId":         {config.GetConfig().Username},
-		"var.password":        {config.GetConfig().Password},
-		"var.inputOmit":       {"false"},
+		"var.loginId":   {config.GetConfig().Username},
+		"var.password":  {config.GetConfig().Password},
+		"var.inputOmit": {"false"},
 	}
 
-	response, err := httputils.PostREQWithParam(loginURL, uv)
+	response, err := httputils.PostREQWithURLParam(loginURL, uv)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	if response.StatusCode != http.StatusOK {
+		log.Error("HTTP call result code is:", response.StatusCode)
+		return err
+	}
+
+	body, err := getBodyFromResponse(err, response)
 	if err != nil {
 		return err
-
 	}
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-
-		fmt.Println(err)
-		return err
-
-	}
-	fmt.Println(string(body))
-	defer response.Body.Close()
 
 	err = json.Unmarshal(body, &loginResponseStruct)
-	fmt.Println(err, "Error while parsing Login Response JSON", string(body))
+	if err != nil {
+		log.Error(err, "Error while parsing Login Response JSON", string(body))
+	}
 
 	if isPanasonicResponseHasError(loginResponseStruct) {
 		err = errors.New("Internal Panasonic Error. ErrorCode: " + fmt.Sprint(loginResponseStruct.ErrorCode))
 	}
 
+	log.Info("Login success")
+
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return err
 
 	}
 	return nil
 }
 
-func isPanasonicResponseHasError(loginStruct LoginStruct) bool {
+func getBodyFromResponse(err error, response *http.Response) ([]byte, error) {
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	log.Trace(string(body))
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Error(err)
+			return
+		}
+	}(response.Body)
+	return body, nil
+}
+
+func isPanasonicResponseHasError(loginStruct ResponseStruct) bool {
 	return loginStruct.ErrorCode != 0
 }
