@@ -17,7 +17,7 @@ If you satisfied, thanks for buying a coffee for me :)
 #### Install
 `make`
 #### Configure
-Create a config file copy as `config` from [config.example](./config.example)
+Create a config file copy as `config` from [config.example](./etc/config.example)
 
 The config have to be defined in `PANASONIC_AQUAREA_SMART_CLOUD_MQTT_CONFIG` environment variable.
 
