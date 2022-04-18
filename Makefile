@@ -47,7 +47,7 @@ osx-arm64: clean osx-arm64
 
 win-all: clean win-arm win-amd64 win-386
 
-release-for-github: clean linux-386 linux-amd64 linux-arm linux-arm64 osx-amd64 osx-arm64 win-386 win-amd64 win-arm64
+release-for-github: clean linux-386 linux-amd64 linux-arm linux-arm64 osx-amd64 osx-arm64 win-386 win-amd64 win-arm
 release: release-for-github docker
 
 docker:
