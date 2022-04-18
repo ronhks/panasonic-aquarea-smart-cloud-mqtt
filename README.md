@@ -1,4 +1,4 @@
-# Panasonic Aquaera Smart Cloud integration woth MQTT
+# Panasonic Aquaera Smart Cloud integration with MQTT
 At home I have a Home Assistant and I would like control my Panasonic Aquarea Heatpump.
 
 This project a transformation layer from [Panasonic Smart Cloud](https://aquarea-smart.panasonic.com/) with [MQTT](https://en.wikipedia.org/wiki/MQTT). 
