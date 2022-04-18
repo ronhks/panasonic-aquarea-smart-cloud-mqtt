@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/BurntSushi/toml"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"time"
 )
@@ -18,7 +18,7 @@ func GetConfig() *Config {
 }
 
 func readAndSetConfig() {
-	configEnvVariable := os.Getenv("PANASONIC-AQUAREA-SMART-CLOUD-MQTT-CONFIG")
+	configEnvVariable := os.Getenv("PANASONIC_AQUAREA_SMART_CLOUD_MQTT_CONFIG")
 
 	if len(configEnvVariable) == 0 {
 		configEnvVariable = "etc/config"
@@ -33,7 +33,8 @@ func readAndSetConfig() {
 func readConfig(configFilename string) {
 	_, err := os.Stat(configFilename)
 	if err != nil {
-		log.Fatal("Config file is missing: ", configFilename)
+		log.Error("Missing config file. You can define it in environment variable or use the default: etc/config")
+		log.Fatal("Config file is missing: \"", configFilename, "\"")
 	}
 
 	if _, err := toml.DecodeFile(configFilename, &config); err != nil {

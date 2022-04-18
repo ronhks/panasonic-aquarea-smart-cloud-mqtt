@@ -13,7 +13,10 @@ If you satisfied, thanks for buying a coffee for me :)
 `docker pull`
 ### Configure
 Create a config file copy as `config` from [config.example](./config.example)
-Change the parameters
+
+The config have to be defined in `PANASONIC_AQUAREA_SMART_CLOUD_MQTT_CONFIG` environment variable.
+
+If the environment variable not set, the default is: `etc/config`
 ### Run
 `docker run`
 ### Usage
