@@ -17,12 +17,14 @@ type SetTemp struct {
 }
 
 const (
-	ON                  int = 1
-	OFF                 int = 0
-	ZoneId1             int = 1
-	ZoneId2             int = 2
-	ModeHeatAndHotWater int = -1
-	ModeOnlyHotWater    int = 0
+	ON                  int    = 1
+	OFF                 int    = 0
+	ON_STR              string = "ON"
+	OFF_STR             string = "OFF"
+	ZoneId1             int    = 1
+	ZoneId2             int    = 2
+	ModeHeatAndHotWater int    = -1
+	ModeOnlyHotWater    int    = 0
 )
 
 type SetOpertaion struct {

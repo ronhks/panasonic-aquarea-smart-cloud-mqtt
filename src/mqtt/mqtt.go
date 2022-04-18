@@ -54,10 +54,13 @@ func subscribe(mqttClient mqtt.Client) {
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/temp/set", 0, setWaterTempHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation/on", 0, setWaterOperationOnHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation/off", 0, setWaterOperationOffHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation", 0, setWaterOperationHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/on", 0, setHeatOperationOnHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/off", 0, setHeatOperationOffHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation", 0, setHeatOperationHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation/on", 0, setOperationOnHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation/off", 0, setOperationOffHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation", 0, setOperationHandler)
 }
 
 func setWaterTempHandler(_ mqtt.Client, msg mqtt.Message) {
@@ -115,6 +118,52 @@ func setOperationOnHandler(_ mqtt.Client, _ mqtt.Message) {
 }
 func setOperationOffHandler(_ mqtt.Client, _ mqtt.Message) {
 	err := device.SetOperationOff()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+}
+
+func setOperationHandler(_ mqtt.Client, msg mqtt.Message) {
+
+	payload := string(msg.Payload())
+	var err error
+
+	if data.OFF_STR == payload {
+		err = device.SetOperationOff()
+	} else if data.ON_STR == payload {
+		err = device.SetOperationOn()
+	}
+	if err != nil {
+		log.Error(err)
+		return
+	}
+}
+func setWaterOperationHandler(_ mqtt.Client, msg mqtt.Message) {
+
+	payload := string(msg.Payload())
+	var err error
+
+	if data.OFF_STR == payload {
+		err = water.SetOperationOff()
+	} else if data.ON_STR == payload {
+		err = water.SetOperationOn()
+	}
+	if err != nil {
+		log.Error(err)
+		return
+	}
+}
+func setHeatOperationHandler(_ mqtt.Client, msg mqtt.Message) {
+
+	payload := string(msg.Payload())
+	var err error
+
+	if data.OFF_STR == payload {
+		err = heat.SetOperationOff()
+	} else if data.ON_STR == payload {
+		err = heat.SetOperationOn()
+	}
 	if err != nil {
 		log.Error(err)
 		return
