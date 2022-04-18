@@ -18,7 +18,13 @@ func GetConfig() *Config {
 }
 
 func readAndSetConfig() {
-	var configFilename = "etc/config"
+	configEnvVariable := os.Getenv("PANASONIC-AQUAREA-SMART-CLOUD-MQTT-CONFIG")
+
+	if len(configEnvVariable) == 0 {
+		configEnvVariable = "etc/config"
+	}
+
+	var configFilename = configEnvVariable
 	readConfig(configFilename)
 
 	setTimeouts()
