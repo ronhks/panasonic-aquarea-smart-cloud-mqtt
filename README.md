@@ -7,21 +7,33 @@ If you satisfied, thanks for buying a coffee for me :)
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/zsoltdenes)
 
+### Requirements
+* MQTT server
+* [Panasonic Smart Cloud](https://aquarea-smart.panasonic.com/) registration
+* [Panasonic Aquarea Wifi Module - Panasonic CZ-TAW1](https://www.panasonicproclub.com/uploads/PL/catalogues/CZ-TAW1_quick%20guide.pdf)
 
-## How to start
-### Install
-`docker pull`
-### Configure
+## How to start 
+### Natively
+#### Install
+`make`
+#### Configure
 Create a config file copy as `config` from [config.example](./config.example)
 
 The config have to be defined in `PANASONIC_AQUAREA_SMART_CLOUD_MQTT_CONFIG` environment variable.
 
 If the environment variable not set, the default is: `etc/config`
-### Run
-`docker run`
-### Usage
+#### Run
+```sh
+$ PANASONIC_AQUAREA_SMART_CLOUD_MQTT_CONFIG="CONFIG_FILE_LOCATION" bin/OS/panasonic-aquarea-smart-cloud-mqtt-OS-ARCH
+```
+### As continer
+#### Pull
+`docker pull `
+#### Run
+`docker run -E PANASONIC_AQUAREA_SMART_CLOUD_MQTT_CONFIG="CONFIG_FILE_LOCATION" `
+## How to use
 The MQTT topic are under the `MqttTopicRoot`.
-#### Read values
+### Read values
 * `/outdoor/temp/now` - Outdoor temp
 * `/heat/temp/max` - Heating max. temp 
 * `/heat/temp/min` - Heating min. temp
@@ -38,7 +50,7 @@ The MQTT topic are under the `MqttTopicRoot`.
   * `0` - OFF
   * `1` - ON
 
-#### Change values
+### Change values
 * `/water/temp/set` - set the HOT WATER temp. 
   * sample REQUEST JSON:
     ```json
@@ -56,11 +68,6 @@ The MQTT topic are under the `MqttTopicRoot`.
 ## Contributing
 Welcome all type of contributing! :)
 
-### Requirements
-* docker daemon
-* MQTT server
-* Panasonic Smart Cloud registration
-* [Panasonic Aquarea T-CAP Wifi Module - Panasonic CZ-TAW1](https://www.panasonicproclub.com/uploads/PL/catalogues/CZ-TAW1_quick%20guide.pdf)
 #### 3rd party libs
 **Thanks for**
 * [BurntSushi/toml](https://github.com/BurntSushi/toml) for easier config handling
