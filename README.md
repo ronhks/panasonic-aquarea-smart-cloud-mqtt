@@ -48,15 +48,24 @@ The MQTT topic are under the `MqttTopicRoot`.
 * `/heat/operation` - Heating operation status
   * `0` - OFF
   * `1` - ON
+* `/heat/operation/set` - Change Heating operation status
+  * `OFF` - OFF
+  * `ON` - ON
 * `/water/temp/now` - Actual Hot Water temp
 * `/water/temp/max` - Hot water max. temp.
 * `/water/temp/min` - Hot water min. temp.
 * `/water/operation` - Hot water operation status
   * `0` - OFF
   * `1` - ON
+* `/water/operation/set` - Change Hot water operation status
+  * `OFF` - OFF
+  * `ON` - ON
 * `/operation` - Device operation status
   * `0` - OFF
   * `1` - ON
+* `/operation/set` - Device operation status
+  * `OFF` - OFF
+  * `ON` - ON
 
 ### Change values
 * `/water/temp/set` - set the HOT WATER temp. 

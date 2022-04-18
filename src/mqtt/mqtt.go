@@ -54,13 +54,13 @@ func subscribe(mqttClient mqtt.Client) {
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/temp/set", 0, setWaterTempHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation/on", 0, setWaterOperationOnHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation/off", 0, setWaterOperationOffHandler)
-	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation", 0, setWaterOperationHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/water/operation/set", 0, setWaterOperationHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/on", 0, setHeatOperationOnHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/off", 0, setHeatOperationOffHandler)
-	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation", 0, setHeatOperationHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/set", 0, setHeatOperationHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation/on", 0, setOperationOnHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation/off", 0, setOperationOffHandler)
-	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation", 0, setOperationHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation/set", 0, setOperationHandler)
 }
 
 func setWaterTempHandler(_ mqtt.Client, msg mqtt.Message) {
