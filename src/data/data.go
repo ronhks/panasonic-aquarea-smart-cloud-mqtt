@@ -1,12 +1,12 @@
 package data
 
 import (
-	"config"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/config"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/http"
 	log "github.com/sirupsen/logrus"
-	"http"
 	"io"
 	"io/ioutil"
 	"net/http"

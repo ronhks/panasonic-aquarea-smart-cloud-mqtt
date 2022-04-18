@@ -1,12 +1,12 @@
 package login
 
 import (
-	"config"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/config"
+	httputils "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/http"
 	log "github.com/sirupsen/logrus"
-	httputils "http"
 	"io"
 	"io/ioutil"
 	"net/http"

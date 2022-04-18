@@ -1,13 +1,13 @@
 package heat
 
 import (
-	"data"
 	"encoding/json"
 	"errors"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/data"
+	httputils "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/http"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/session"
 	log "github.com/sirupsen/logrus"
-	httputils "http"
 	"net/http"
-	"session"
 )
 
 func SetOperationOn() error {

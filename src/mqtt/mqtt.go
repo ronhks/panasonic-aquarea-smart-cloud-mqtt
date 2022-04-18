@@ -1,17 +1,17 @@
 package mqtt
 
 import (
-	conf "config"
-	"data"
-	"device"
 	"encoding/json"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	conf "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/config"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/data"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/device"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/heat"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/water"
 	log "github.com/sirupsen/logrus"
-	"heat"
 	"strings"
 	"time"
-	"water"
 )
 
 var mqttClient mqtt.Client

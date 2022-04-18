@@ -2,8 +2,8 @@ package httputils
 
 import (
 	"bytes"
-	"config"
 	"crypto/tls"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/config"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"net/http"

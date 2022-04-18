@@ -3,12 +3,12 @@ package main
 import (
 	"time"
 
-	"config"
-	"data"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/config"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/data"
+	httputils "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/http"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/mqtt"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/panasonic"
 	log "github.com/sirupsen/logrus"
-	httputils "http"
-	"mqtt"
-	"panasonic"
 )
 
 func main() {

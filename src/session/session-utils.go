@@ -1,8 +1,8 @@
 package session
 
 import (
-	"config"
-	httputils "http"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/config"
+	httputils "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/http"
 )
 
 func GetSessionInitData() (deviceGuid string, deviceDataURLWithDeviceID string) {

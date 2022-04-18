@@ -1,10 +1,10 @@
 package panasonic
 
 import (
-	conf "config"
+	conf "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/config"
+	httputils "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/http"
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/login"
 	log "github.com/sirupsen/logrus"
-	httputils "http"
-	"login"
 )
 
 func Login() {
