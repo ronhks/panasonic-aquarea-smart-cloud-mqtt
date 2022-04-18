@@ -18,7 +18,7 @@ func GetConfig() *Config {
 }
 
 func readAndSetConfig() {
-	var configFilename = "config"
+	var configFilename = "etc/config"
 	readConfig(configFilename)
 
 	setTimeouts()

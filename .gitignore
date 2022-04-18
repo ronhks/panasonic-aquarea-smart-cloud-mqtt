@@ -5,6 +5,7 @@ har-files
 bin
 old
 pkg
+etc/config
 
 src/github.com/
 src/golang.org/
