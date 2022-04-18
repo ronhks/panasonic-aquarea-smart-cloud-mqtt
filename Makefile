@@ -29,9 +29,9 @@ osx-arm64: clean osx-arm64
 
 docker:
 	GOOS=linux GOARCH=amd64 go build -o bin/linux/panasonic-aquarea-smart-cloud-mqtt-linux
-	docker build . --tag ronhks/panasonic-aquarea-smart-cloud-mqtt:1.1.1
-	docker tag ronhks/panasonic-aquarea-smart-cloud-mqtt:1.1.1 ronhks/panasonic-aquarea-smart-cloud-mqtt:latest
+	docker build . --tag ronhks/panasonic-aquarea-smart-cloud-mqtt:1.1.2
+	docker tag ronhks/panasonic-aquarea-smart-cloud-mqtt:1.1.2 ronhks/panasonic-aquarea-smart-cloud-mqtt:latest
 
 docker-push:
-	docker push ronhks/panasonic-aquarea-smart-cloud-mqtt:1.1.1
+	docker push ronhks/panasonic-aquarea-smart-cloud-mqtt:1.1.2
 	docker push ronhks/panasonic-aquarea-smart-cloud-mqtt:latest
