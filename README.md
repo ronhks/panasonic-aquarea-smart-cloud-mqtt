@@ -28,9 +28,10 @@ $ PANASONIC_AQUAREA_SMART_CLOUD_MQTT_CONFIG="CONFIG_FILE_LOCATION" bin/OS/panaso
 ```
 ### As continer
 #### Pull
-`docker pull `
+`docker pull ronhks/panasonic-aquarea-smart-cloud-mqtt`
 #### Run
-`docker run -E PANASONIC_AQUAREA_SMART_CLOUD_MQTT_CONFIG="CONFIG_FILE_LOCATION" `
+`docker run --name panasonic-aquarea-smart-cloud-mqtt -v HOST_OS_CONFIG_LOCATION/:/app/etc ronhks/panasonic-aquarea-smart-cloud-mqtt`
+As daemon add `-d` option
 ## How to use
 The MQTT topic are under the `MqttTopicRoot`.
 ### Read values
