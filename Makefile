@@ -1,7 +1,8 @@
 all: clean compile-linux
 
 clean:
-	rm -R bin/
+	rm -R bin
+	mkdir bin
 
 linux-386:
 	echo "Compiling bin for linux-386"
@@ -27,21 +28,24 @@ osx-amd64:
 	echo "Compiling bin for osx-amd64"
 	GOOS=darwin GOARCH=amd64 go build -o bin/osx/panasonic-aquarea-smart-cloud-mqtt-osx-amd64
 
-win-arm64:
+win-arm:
 	echo "Compiling bin for windows-arm64"
-	GOOS=windows GOARCH=arm64 go build -o bin/osx/panasonic-aquarea-smart-cloud-mqtt-windows-arm64.exe
+	GOOS=windows GOARCH=arm go build -o bin/win/panasonic-aquarea-smart-cloud-mqtt-windows-arm.exe
 
 win-386:
 	echo "Compiling bin for windows-386"
-	GOOS=windows GOARCH=386 go build -o bin/linux/panasonic-aquarea-smart-cloud-mqtt-windows-386.exe
+	GOOS=windows GOARCH=386 go build -o bin/win/panasonic-aquarea-smart-cloud-mqtt-windows-386.exe
 
 win-amd64:
 	echo "Compiling bin for windows-arm64"
-	GOOS=windows GOARCH=amd64 go build -o bin/osx/panasonic-aquarea-smart-cloud-mqtt-windows-amd64.exe
+	GOOS=windows GOARCH=amd64 go build -o bin/win/panasonic-aquarea-smart-cloud-mqtt-windows-amd64.exe
 
 linux-all: clean linux-386 linux-amd64 linux-arm linux-arm64
 linux-amd64: clean linux-amd64
+
 osx-arm64: clean osx-arm64
+
+win-all: clean win-arm win-amd64 win-386
 
 release-for-github: clean linux-386 linux-amd64 linux-arm linux-arm64 osx-amd64 osx-arm64 win-386 win-amd64 win-arm64
 release: release-for-github docker
