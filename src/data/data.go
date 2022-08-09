@@ -106,7 +106,7 @@ func GetDeviceData() (StatusData, error) {
 
 	const referer = "https://aquarea-smart.panasonic.com/remote/a2wEnergyConsumption?keepState=true"
 	response, err := httputils.GetREQ(deviceDataURLWithDeviceID, referer)
-	if response.StatusCode != http.StatusOK {
+	if response != nil && response.StatusCode != http.StatusOK {
 		log.Error("HTTP call result code is:", response.StatusCode)
 		errors.New("NOK HTTP response code")
 		return statusData, err
