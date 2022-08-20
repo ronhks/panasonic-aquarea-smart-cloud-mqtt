@@ -106,7 +106,7 @@ func GetDeviceData() (StatusData, error) {
 
 	const referer = "https://aquarea-smart.panasonic.com/remote/a2wEnergyConsumption?keepState=true"
 	response, err := httputils.GetREQ(deviceDataURLWithDeviceID, referer)
-	if response != nil {
+	if response == nil {
 		err = errors.New("Empty response from Energy Conspumption API")
 	}
 

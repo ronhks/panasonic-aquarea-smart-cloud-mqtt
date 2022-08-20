@@ -45,6 +45,15 @@ func startQueryStatusData() {
 func initializeTheEnvironment() {
 	httputils.InitHttpClient()
 	mqtt.InitMqttConnection()
+	setLogSetup()
+
+}
+
+func setLogSetup() {
+	log.SetFormatter(&log.TextFormatter{
+		FullTimestamp: true,
+	})
+	log.SetReportCaller(true)
 }
 
 func loginAndGetContract() error {
