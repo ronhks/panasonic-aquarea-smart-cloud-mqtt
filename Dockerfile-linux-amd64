@@ -1,0 +1,5 @@
+FROM amd64/alpine
+
+COPY bin/linux/panasonic-aquarea-smart-cloud-mqtt-linux-amd64 /app/
+WORKDIR /app
+CMD [ "./panasonic-aquarea-smart-cloud-mqtt-linux-amd64"]

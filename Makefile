@@ -1,8 +1,18 @@
-all: clean compile-linux
+version = 1.1.4
+
+all: clean compile-all docker
+
+help:
+	echo "Available params:"
+	echo "  * all: clean compile-linux"
+	echo "  * docker: build image"
+	echo "  * docker-push: push the image"
 
 clean:
 	rm -R bin
 	mkdir bin
+
+compile-linux-all: linux-386 linux-amd64 linux-arm linux-arm64
 
 linux-386:
 	echo "Compiling bin for linux-386"
@@ -20,6 +30,8 @@ linux-arm64:
 	echo "Compiling bin for linux-arm64"
 	GOOS=linux GOARCH=arm64 go build -o bin/linux/panasonic-aquarea-smart-cloud-mqtt-linux-arm64
 
+compile-osx-all: osx-amd64 osx-arm64
+
 osx-arm64:
 	echo "Compiling bin for osx-arm64"
 	GOOS=darwin GOARCH=arm64 go build -o bin/osx/panasonic-aquarea-smart-cloud-mqtt-osx-arm64
@@ -27,6 +39,8 @@ osx-arm64:
 osx-amd64:
 	echo "Compiling bin for osx-amd64"
 	GOOS=darwin GOARCH=amd64 go build -o bin/osx/panasonic-aquarea-smart-cloud-mqtt-osx-amd64
+
+compile-win-all: win-386 win-amd64 win-arm
 
 win-arm:
 	echo "Compiling bin for windows-arm64"
@@ -40,21 +54,37 @@ win-amd64:
 	echo "Compiling bin for windows-arm64"
 	GOOS=windows GOARCH=amd64 go build -o bin/win/panasonic-aquarea-smart-cloud-mqtt-windows-amd64.exe
 
-linux-all: clean linux-386 linux-amd64 linux-arm linux-arm64
-linux-amd64: clean linux-amd64
+docker-linux-amd64: clean
+	docker build -f ./Dockerfile-linux-amd64 . --tag ronhks/panasonic-aquarea-smart-cloud-mqtt:$(version)-amd64
+	docker tag ronhks/panasonic-aquarea-smart-cloud-mqtt:$(version)-amd64 ronhks/panasonic-aquarea-smart-cloud-mqtt:latest-amd64
 
-osx-arm64: clean osx-arm64
+docker-linux-armv7: clean
+	docker build -f ./Dockerfile-linux-arm . --tag ronhks/panasonic-aquarea-smart-cloud-mqtt:$(version)-arm
+	docker tag ronhks/panasonic-aquarea-smart-cloud-mqtt:$(version)-arm ronhks/panasonic-aquarea-smart-cloud-mqtt:latest-arm
 
-win-all: clean win-arm win-amd64 win-386
 
-release-for-github: clean linux-386 linux-amd64 linux-arm linux-arm64 osx-amd64 osx-arm64 win-386 win-amd64 win-arm
-release: release-for-github docker
+docker-linux-arm64: clean
+	docker build -f ./Dockerfile-linux-arm64 . --tag ronhks/panasonic-aquarea-smart-cloud-mqtt:$(version)-arm64
+	docker tag ronhks/panasonic-aquarea-smart-cloud-mqtt:$(version)-arm64 ronhks/panasonic-aquarea-smart-cloud-mqtt:latest-arm64
 
-docker:
-	GOOS=linux GOARCH=amd64 go build -o bin/linux/panasonic-aquarea-smart-cloud-mqtt-linux
-	docker build . --tag ronhks/panasonic-aquarea-smart-cloud-mqtt:1.1.2
-	docker tag ronhks/panasonic-aquarea-smart-cloud-mqtt:1.1.2 ronhks/panasonic-aquarea-smart-cloud-mqtt:latest
+docker-clean:
+	docker images 'ronhks/panasonic-aquarea-smart-cloud-mqtt' -a -q | xargs -r docker rmi -f $(docker images | grep 'ronhks/panasonic-aquarea-smart-cloud-mqtt')
+
+docker-build: docker-linux-amd64 docker-linux-armv7 docker-linux-arm64
 
 docker-push:
-	docker push ronhks/panasonic-aquarea-smart-cloud-mqtt:1.1.2
-	docker push ronhks/panasonic-aquarea-smart-cloud-mqtt:latest
+	docker push ronhks/panasonic-aquarea-smart-cloud-mqtt:$(version)-arm
+	docker push ronhks/panasonic-aquarea-smart-cloud-mqtt:latest-arm
+	docker push ronhks/panasonic-aquarea-smart-cloud-mqtt:$(version)-arm64
+	docker push ronhks/panasonic-aquarea-smart-cloud-mqtt:latest-arm64
+	docker push ronhks/panasonic-aquarea-smart-cloud-mqtt:$(version)-amd64
+	docker push ronhks/panasonic-aquarea-smart-cloud-mqtt:latest-amd64
+
+git-tag:
+	git tag $(version)
+	git push
+
+docker-build-all-and-push-all: docker-clean docker-build docker-push
+
+compile-all: compile-linux-all compile-osx-all compile-win-all
+release: clean compile-all docker-build-all-and-push-all
