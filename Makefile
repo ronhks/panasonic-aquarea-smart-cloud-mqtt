@@ -82,7 +82,7 @@ docker-push:
 
 git-tag:
 	git tag $(version)
-	git push
+	git push --tags
 
 docker-build-all-and-push-all: docker-clean docker-build docker-push
 
