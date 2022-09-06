@@ -1,6 +1,6 @@
 :information_source: :one: HA forum available [there](https://community.home-assistant.io/t/panasonic-aquarea-heat-pump-integration) 
 
-:information_source: :two:  If you would like to use a full integration, please check [Carlos's full HomeAssistant integration](https://github.com/cjaliaga/home-assistant-aquarea)!
+:information_source: :two:  If you would like to use a full integration, please check [Carlos's](https://github.com/cjaliaga) full [HomeAssistant integration](https://github.com/cjaliaga/home-assistant-aquarea)!
 
 # Panasonic Aquaera Smart Cloud integration with MQTT
 At home I have a Home Assistant and I would like control my Panasonic Aquarea Heatpump.
