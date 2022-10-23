@@ -1,10 +1,11 @@
 package config
 
 import (
-	"github.com/BurntSushi/toml"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"time"
+
+	"github.com/BurntSushi/toml"
+	log "github.com/sirupsen/logrus"
 )
 
 var config *Config

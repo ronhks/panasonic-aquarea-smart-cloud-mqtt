@@ -23,3 +23,6 @@ set-status.json
 **/*.iml
 **/pipeline.gdsl
 
+etc/config 
+etc/config 
+etc/config.cubetta

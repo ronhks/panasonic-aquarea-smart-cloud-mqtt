@@ -1,0 +1,13 @@
+AquareaSmartCloudURL="https://aquarea-smart.panasonic.com/"
+Username="ivan.codarin@gmail.com"
+Password="Picbosco_1"
+HttpTimeout=20
+MqttServer="192.168.1.21"
+MqttPort="1883"
+MqttLogin="openhabian"
+MqttPass="Picbosco_1"
+MqttTopicRoot="aquarea"
+MqttClientID="aquarea"
+MqttKeepalive=90
+RefreshInterval=60
+LogSecOffset=2550
