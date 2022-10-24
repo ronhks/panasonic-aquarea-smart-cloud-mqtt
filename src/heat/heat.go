@@ -26,6 +26,9 @@ func SetOperationOn() error {
 
 	response, err := httputils.PostREQWithJsonBody(deviceDataURLWithDeviceID, byteArray)
 
+	var debugByteArray = string(byteArray)
+	log.Info("SetOperationON  JSON bytearray: ", debugByteArray)
+
 	if err != nil {
 		log.Error(err)
 		return err
@@ -53,6 +56,9 @@ func SetOperationOff() error {
 	}
 
 	response, err := httputils.PostREQWithJsonBody(deviceDataURLWithDeviceID, byteArray)
+
+	var debugByteArray = string(byteArray)
+	log.Info("SetOperationOff  JSON bytearray: ", debugByteArray)
 
 	if err != nil {
 		log.Error(err)
@@ -98,4 +104,65 @@ func setZoneStatus(zoneId int, newStatus int) data.SetZoneStatus {
 	log.Info(logMsg)
 
 	return result
+}
+
+// --- to be moved -----//
+func SetHeatTemp(newTemp int) error {
+	deviceGuid, deviceDataURLWithDeviceID := session.GetSessionInitData()
+
+	var minTemp = newTemp - 3
+	var maxTemp = newTemp + 3
+
+	var zoneStatus data.ZoneStatus
+	zoneStatus.ZoneId = 1
+	zoneStatus.HeatSet = newTemp
+	zoneStatus.HeatMin = minTemp
+	zoneStatus.HeatMax = maxTemp
+
+	var status data.Status
+	status.DeviceGuid = deviceGuid
+	status.ZoneStatus = []data.ZoneStatus{zoneStatus}
+	var statusDataInput data.StatusData
+	statusDataInput.Status = []data.Status{status}
+
+	byteArray, err := getJsonByteArray(statusDataInput)
+
+	var debugByteArray = string(byteArray)
+	log.Info("IVAN - Heat temperature statusDataInput: ", statusDataInput)
+	log.Info("IVAN - Heat temperature jsonbytearray-err: ", err)
+	log.Info("IVAN - Heat temperature JSON Byte array stringified: ", debugByteArray)
+
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	response, err := httputils.PostREQWithJsonBody(deviceDataURLWithDeviceID, byteArray)
+
+	log.Info("IVAN - Heat temperature response-err: ", err)
+	log.Info("IVAN - Heat temperature response: ", response)
+
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	if response.StatusCode != http.StatusOK {
+		log.Error("HTTP call result code is:", response.StatusCode)
+		return errors.New("NOK HTTP response code")
+	}
+
+	log.Info("Heat temp set to ", newTemp, " C")
+
+	return nil
+}
+
+func getJsonByteArray(statusDataInput data.StatusData) (jsonByteArray []byte, error error) {
+	byteArray, err := json.Marshal(&statusDataInput)
+
+	if err != nil {
+		log.Errorf("Fail to create convert JSON, %v", err.Error())
+		return nil, err
+	}
+	return byteArray, err
 }
