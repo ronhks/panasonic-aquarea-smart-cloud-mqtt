@@ -3,11 +3,13 @@ package heat
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
+	"strconv"
+
 	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/data"
 	httputils "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/http"
 	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/session"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func SetOperationOn() error {
@@ -70,7 +72,7 @@ func setNewStatus(newStatus int, deviceNewStatus int, operationMode int, deviceG
 	var status data.SetStatus
 
 	zoneStatus1 := setZoneStatus(data.ZoneId1, newStatus)
-	zoneStatus2 := setZoneStatus(data.ZoneId2, data.OFF)
+	zoneStatus2 := setZoneStatus(data.ZoneId2, newStatus)
 
 	status.ZoneStatus = []data.SetZoneStatus{zoneStatus1, zoneStatus2}
 	status.OperationStatus = &deviceNewStatus
@@ -80,12 +82,20 @@ func setNewStatus(newStatus int, deviceNewStatus int, operationMode int, deviceG
 	status.DeviceGuid = deviceGuid
 	var statusDataInput data.SetStatusData
 	statusDataInput.Status = []data.SetStatus{status}
-	return statusDataInput
+	var result = statusDataInput
+
+	return result
 }
 
 func setZoneStatus(zoneId int, newStatus int) data.SetZoneStatus {
 	var zoneStatus data.SetZoneStatus
 	zoneStatus.ZoneId = &zoneId
 	zoneStatus.OperationStatus = &newStatus
-	return zoneStatus
+
+	var result = zoneStatus
+
+	var logMsg = "Set heating for zone: " + strconv.Itoa(zoneId) + " to status: " + strconv.Itoa(newStatus)
+	log.Info(logMsg)
+
+	return result
 }

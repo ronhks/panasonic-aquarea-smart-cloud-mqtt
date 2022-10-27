@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/config"
-	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/http"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/config"
+	httputils "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/http"
+	log "github.com/sirupsen/logrus"
 )
 
 type SetTemp struct {
@@ -106,12 +107,17 @@ func GetDeviceData() (StatusData, error) {
 
 	const referer = "https://aquarea-smart.panasonic.com/remote/a2wEnergyConsumption?keepState=true"
 	response, err := httputils.GetREQ(deviceDataURLWithDeviceID, referer)
+
+	log.Info("GetDeviceData response: ", response)
+
 	if response == nil {
 		err = errors.New("Empty response from Energy Conspumption API")
+		log.Error("HTTP call result response is:", response)
 	}
 
 	if err == nil && response.StatusCode != http.StatusOK {
 		log.Error("HTTP call result code is:", response.StatusCode)
+		log.Error("HTTP call result response is:", response)
 		errors.New("NOK HTTP response code")
 		return statusData, err
 	}
