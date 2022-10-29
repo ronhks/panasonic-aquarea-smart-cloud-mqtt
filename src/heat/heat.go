@@ -106,15 +106,26 @@ func setZoneStatus(zoneId int, newStatus int) data.SetZoneStatus {
 	return result
 }
 
-// --- to be moved -----//
 func SetHeatTemp(newTemp int) error {
+
+	var zoneStatus1 = setZoneHeatTemp(1, newTemp)
+	var zoneStatus2 = setZoneHeatTemp(2, newTemp)
+
+	log.Info("Zone status for zone 2: ", zoneStatus1)
+	log.Info("Zone status for zone 2: ", zoneStatus2)
+
+	return nil
+}
+
+func setZoneHeatTemp(zoneId int, newTemp int) data.ZoneStatus {
 	deviceGuid, deviceDataURLWithDeviceID := session.GetSessionInitData()
 
+	//Offset for min an max temp
 	var minTemp = newTemp - 3
 	var maxTemp = newTemp + 3
 
 	var zoneStatus data.ZoneStatus
-	zoneStatus.ZoneId = 1
+	zoneStatus.ZoneId = zoneId
 	zoneStatus.HeatSet = newTemp
 	zoneStatus.HeatMin = minTemp
 	zoneStatus.HeatMax = maxTemp
@@ -127,34 +138,31 @@ func SetHeatTemp(newTemp int) error {
 
 	byteArray, err := getJsonByteArray(statusDataInput)
 
-	var debugByteArray = string(byteArray)
-	log.Info("IVAN - Heat temperature statusDataInput: ", statusDataInput)
-	log.Info("IVAN - Heat temperature jsonbytearray-err: ", err)
-	log.Info("IVAN - Heat temperature JSON Byte array stringified: ", debugByteArray)
+	var infoJsonDataRequest = string(byteArray)
+	log.Info("Heat temperature JSON data: ", infoJsonDataRequest)
+
+	var result = zoneStatus
 
 	if err != nil {
 		log.Error(err)
-		return err
+		return result
 	}
 
 	response, err := httputils.PostREQWithJsonBody(deviceDataURLWithDeviceID, byteArray)
 
-	log.Info("IVAN - Heat temperature response-err: ", err)
-	log.Info("IVAN - Heat temperature response: ", response)
-
 	if err != nil {
 		log.Error(err)
-		return err
+		return result
 	}
 
 	if response.StatusCode != http.StatusOK {
 		log.Error("HTTP call result code is:", response.StatusCode)
-		return errors.New("NOK HTTP response code")
+		return result
 	}
 
 	log.Info("Heat temp set to ", newTemp, " C")
+	return result
 
-	return nil
 }
 
 func getJsonByteArray(statusDataInput data.StatusData) (jsonByteArray []byte, error error) {
