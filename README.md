@@ -86,6 +86,14 @@ The MQTT topic are under the `MqttTopicRoot`.
 * `/operation/on` - Turn ON the device
 * `/operation/off` - Turn OFF the device
 
+* `/heat/temp/set` - set the HEAT water temp (if this is customizable from your heat pump installer settings). The same temp will be set for first and second zone.
+  * sample REQUEST JSON:
+    ```json
+    {
+      "newTemp" : 42
+    }
+    ```
+
 ## Contributing
 Welcome all type of contributing! :)
 
