@@ -11,3 +11,4 @@ MqttClientID="aquarea-test-pub"
 MqttKeepalive=60
 RefreshInterval=10
 LogSecOffset=2550
+HeatHysteresis=1

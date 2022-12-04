@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	conf "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/config"
 	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/data"
 	httputils "github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/http"
 	"github.com/ronhks/panasonic-aquarea-smart-cloud-mqtt/src/session"
@@ -120,9 +121,12 @@ func SetHeatTemp(newTemp int) error {
 func setZoneHeatTemp(zoneId int, newTemp int) data.ZoneStatus {
 	deviceGuid, deviceDataURLWithDeviceID := session.GetSessionInitData()
 
+	config := conf.GetConfig()
+	var heatHysteresis = config.HeatHysteresis
+
 	//Offset for min an max temp
-	var minTemp = newTemp - 3
-	var maxTemp = newTemp + 3
+	var minTemp = newTemp - heatHysteresis
+	var maxTemp = newTemp + heatHysteresis
 
 	var zoneStatus data.ZoneStatus
 	zoneStatus.ZoneId = zoneId

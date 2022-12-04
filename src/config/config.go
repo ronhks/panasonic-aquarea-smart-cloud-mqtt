@@ -63,6 +63,7 @@ type Config struct {
 	MqttKeepalive        time.Duration
 	RefreshInterval      time.Duration
 	LogSecOffset         int64
+	HeatHysteresis       int
 }
 
 func GetDeviceDataURL() string {
