@@ -1,4 +1,4 @@
-package login
+package auth
 
 import (
 	"encoding/json"
@@ -22,7 +22,7 @@ type ResponseStruct struct {
 	ErrorCode int `json:"errorCode"`
 }
 
-func GetLogin() error {
+func Login() error {
 
 	var loginResponseStruct ResponseStruct
 	loginURL := config.GetConfig().AquareaSmartCloudURL + "/remote/v1/api/auth/login"
@@ -90,4 +90,20 @@ func getBodyFromResponse(err error, response *http.Response) ([]byte, error) {
 
 func isPanasonicResponseHasError(loginStruct ResponseStruct) bool {
 	return loginStruct.ErrorCode != 0
+}
+
+func Logout() error {
+	logoutURL := config.GetConfig().AquareaSmartCloudURL + "/remote/v1/api/auth/logout"
+
+	response, err := httputils.PostREQ(logoutURL)
+	if err != nil {
+		return err
+	}
+
+	if response.StatusCode != http.StatusOK {
+		log.Error("HTTP call result code is:", response.StatusCode)
+		return err
+	}
+
+	return nil
 }
