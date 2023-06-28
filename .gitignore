@@ -25,6 +25,8 @@ set-status.json
 **/*.iml
 **/pipeline.gdsl
 
-etc/config 
+#macOS
+**/.DS_Store
+
 etc/config 
 etc/config.cubetta
