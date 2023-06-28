@@ -59,6 +59,7 @@ func subscribe(mqttClient mqtt.Client) {
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/on", 0, setHeatOperationOnHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/off", 0, setHeatOperationOffHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/operation/set", 0, setHeatOperationHandler)
+	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/heat/temp/set", 0, setHeatTempHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation/on", 0, setOperationOnHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation/off", 0, setOperationOffHandler)
 	mqttClient.Subscribe(conf.GetConfig().MqttTopicRoot+"/operation/set", 0, setOperationHandler)
@@ -73,6 +74,22 @@ func setWaterTempHandler(_ mqtt.Client, msg mqtt.Message) {
 	}
 
 	err = water.SetWaterTemp(setTemp.NewTemp)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+}
+
+func setHeatTempHandler(_ mqtt.Client, msg mqtt.Message) {
+	var setTemp data.SetTemp
+	err := json.Unmarshal(msg.Payload(), &setTemp)
+
+	if err != nil {
+		log.Error("Fail to parse JSON, %v", token.Error())
+	}
+
+	err = heat.SetHeatTemp(setTemp.NewTemp)
 	if err != nil {
 		log.Error(err)
 		return
@@ -174,6 +191,7 @@ func setHeatOperationHandler(_ mqtt.Client, msg mqtt.Message) {
 func PublishStatus(statusData data.StatusData) {
 	publishLog("/outdoor/temp/now", fmt.Sprintf("%d", statusData.Status[0].OutdoorNow))
 	publishLog("/heat/temp/max", fmt.Sprintf("%d", statusData.Status[0].ZoneStatus[0].HeatMax))
+	publishLog("/heat/temp/now", fmt.Sprintf("%d", statusData.Status[0].ZoneStatus[0].HeatSet))
 	publishLog("/heat/temp/min", fmt.Sprintf("%d", statusData.Status[0].ZoneStatus[0].HeatMin))
 	publishLog("/heat/operation", fmt.Sprintf("%d", statusData.Status[0].ZoneStatus[0].OperationStatus))
 	publishLog("/water/temp/now", fmt.Sprintf("%d", statusData.Status[0].TankStatus[0].TemparatureNow))

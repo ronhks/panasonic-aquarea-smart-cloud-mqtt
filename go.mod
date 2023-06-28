@@ -4,7 +4,6 @@ go 1.17
 
 require (
 	github.com/BurntSushi/toml v1.1.0
-	github.com/davecgh/go-spew v1.1.1
 	github.com/eclipse/paho.mqtt.golang v1.3.5
 	github.com/sirupsen/logrus v1.8.1
 )
