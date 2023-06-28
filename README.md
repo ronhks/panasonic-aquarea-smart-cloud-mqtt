@@ -2,6 +2,10 @@
 
 :information_source: :two:  If you would like to use a full integration, please check [Carlos's](https://github.com/cjaliaga) full [HomeAssistant integration](https://github.com/cjaliaga/home-assistant-aquarea)!
 
+# Thanks
+* for elcode for Heat enabled or disabled on two zones
+* for @rybber78 for the docker compose YAML
+
 # Panasonic Aquaera Smart Cloud integration with MQTT
 At home I have a Home Assistant and I would like control my Panasonic Aquarea Heatpump.
 
