@@ -11,16 +11,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func main() {
+func init() {
 	initializeTheEnvironment()
+}
 
-	err := loginAndGetContract()
-	if err != nil {
-		log.Error(err)
-		log.Error("Error while Login and get Contract")
-		return
-	}
-
+func main() {
 	startQueryStatusData()
 }
 
@@ -46,7 +41,6 @@ func initializeTheEnvironment() {
 	httputils.InitHttpClient()
 	mqtt.InitMqttConnection()
 	setLogSetup()
-
 }
 
 func setLogSetup() {
@@ -73,14 +67,24 @@ func loginAndGetContract() error {
 
 func getStatusData() bool {
 
+	err := loginAndGetContract()
+	if err != nil {
+		log.Error(err)
+		log.Error("Error while Login and get Contract")
+		return false
+	}
+
 	statusData, err := data.GetDeviceData()
 	if err != nil || len(statusData.Status) == 0 {
 		log.Error(err)
 		log.Error("Error while get DeviceData")
+		panasonic.Logout()
 		return false
 	}
 	mqtt.PublishStatus(statusData)
 	log.Trace(statusData)
+
+	panasonic.Logout()
 
 	return true
 }
