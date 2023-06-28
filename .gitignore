@@ -17,6 +17,8 @@ set-status.json
 # compiled binary
 **/panasonic-aquarea-smart-cloud-mqtt
 
+# VSCODE
+**/.vscode
 
 # IDEA
 **/.idea
