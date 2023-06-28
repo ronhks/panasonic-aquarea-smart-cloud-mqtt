@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+    panasonic-aquarea-mqtt:
+        image: ronhks/panasonic-aquarea-smart-cloud-mqtt:latest
+        container_name: panasonic-aquarea-mqtt
+        restart: unless-stopped
+        volumes:
+            - <YOUR_CONFIG_LOCATION>:/app/etc
